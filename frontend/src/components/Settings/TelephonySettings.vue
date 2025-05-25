@@ -5,14 +5,14 @@
     >
       <div>{{ __('Telephony Settings') }}</div>
       <Badge
-        v-if="twilio.isDirty || exotel.isDirty || mediumChanged"
+        v-if="twilio.isDirty || exotel.isDirty || websprix.isDirty || mediumChanged"
         :label="__('Not Saved')"
         variant="subtle"
         theme="orange"
       />
     </h2>
     <div
-      v-if="!twilio.get.loading || !exotel.get.loading"
+      v-if="!twilio.get.loading || !exotel.get.loading || !websprix.get.loading"
       class="flex-1 flex flex-col gap-8 overflow-y-auto"
     >
       <!-- General -->
@@ -24,6 +24,7 @@
           { label: __(''), value: '' },
           { label: __('Twilio'), value: 'Twilio' },
           { label: __('Exotel'), value: 'Exotel' },
+          { label: __('WebSprix'), value: 'WebSprix' },
         ]"
         class="w-1/2"
         :description="__('Default calling medium for logged in user')"
@@ -54,6 +55,19 @@
           doctype="CRM Exotel Settings"
         />
       </div>
+
+      <!-- WebSprix -->
+      <div v-if="isManager()" class="flex flex-col justify-between gap-4">
+        <span class="text-base font-semibold text-ink-gray-9">
+          {{ __('WebSprix') }}
+        </span>
+        <FieldLayout
+          v-if="websprix?.doc && websprixTabs"
+          :tabs="websprixTabs"
+          :data="websprix.doc"
+          doctype="CRM WebSprix Settings"
+        />
+      </div>
     </div>
     <div v-else class="flex flex-1 items-center justify-center">
       <Spinner class="size-8" />
@@ -62,11 +76,11 @@
       <div>
         <ErrorMessage
           class="mt-2"
-          :message="twilio.save.error || exotel.save.error || error"
+          :message="twilio.save.error || exotel.save.error || websprix.save.error || error"
         />
       </div>
       <Button
-        :loading="twilio.save.loading || exotel.save.loading"
+        :loading="twilio.save.loading || exotel.save.loading || websprix.save.loading"
         :label="__('Update')"
         variant="solid"
         @click="update"
@@ -113,6 +127,16 @@ const exotelFields = createResource({
   auto: true,
 })
 
+const websprixFields = createResource({
+  url: 'crm.api.doc.get_fields',
+  cache: ['fields', 'CRM WebSprix Settings'],
+  params: {
+    doctype: 'CRM WebSprix Settings',
+    allow_all_fieldtypes: true,
+  },
+  auto: true,
+})
+
 const twilio = createDocumentResource({
   doctype: 'CRM Twilio Settings',
   name: 'CRM Twilio Settings',
@@ -136,6 +160,21 @@ const exotel = createDocumentResource({
   setValue: {
     onSuccess: () => {
       toast.success(__('Exotel settings updated successfully'))
+    },
+    onError: (err) => {
+      toast.error(err.message + ': ' + err.messages[0])
+    },
+  },
+})
+
+const websprix = createDocumentResource({
+  doctype: 'CRM WebSprix Settings',
+  name: 'CRM WebSprix Settings',
+  fields: ['*'],
+  auto: true,
+  setValue: {
+    onSuccess: () => {
+      toast.success(__('WebSprix settings updated successfully'))
     },
     onError: (err) => {
       toast.error(err.message + ': ' + err.messages[0])
@@ -247,6 +286,58 @@ const exotelTabs = computed(() => {
   return _tabs
 })
 
+const websprixTabs = computed(() => {
+  if (!websprixFields.data) return []
+  let _tabs = []
+  let fieldsData = websprixFields.data
+
+  if (fieldsData[0].type != 'Tab Break') {
+    let _sections = []
+    if (fieldsData[0].type != 'Section Break') {
+      _sections.push({
+        name: 'first_section',
+        columns: [{ name: 'first_column', fields: [] }],
+      })
+    }
+    _tabs.push({ name: 'first_tab', sections: _sections })
+  }
+
+  fieldsData.forEach((field) => {
+    let last_tab = _tabs[_tabs.length - 1]
+    let _sections = _tabs.length ? last_tab.sections : []
+    if (field.fieldtype === 'Tab Break') {
+      _tabs.push({
+        label: field.label,
+        name: field.fieldname,
+        sections: [
+          {
+            name: 'section_' + getRandom(),
+            columns: [{ name: 'column_' + getRandom(), fields: [] }],
+          },
+        ],
+      })
+    } else if (field.fieldtype === 'Section Break') {
+      _sections.push({
+        label: field.label,
+        name: field.fieldname,
+        hideBorder: field.hide_border,
+        columns: [{ name: 'column_' + getRandom(), fields: [] }],
+      })
+    } else if (field.fieldtype === 'Column Break') {
+      _sections[_sections.length - 1].columns.push({
+        name: field.fieldname,
+        fields: [],
+      })
+    } else {
+      let last_section = _sections[_sections.length - 1]
+      let last_column = last_section.columns[last_section.columns.length - 1]
+      last_column.fields.push(field)
+    }
+  })
+
+  return _tabs
+})
+
 const mediumChanged = ref(false)
 
 watch(defaultCallingMedium, () => {
@@ -266,6 +357,9 @@ function update() {
   }
   if (exotel.isDirty) {
     exotel.save.submit()
+  }
+  if (websprix.isDirty) {
+    websprix.save.submit()
   }
 }
 
@@ -289,6 +383,10 @@ function validateIfDefaultMediumIsEnabled() {
   }
   if (defaultCallingMedium.value === 'Exotel' && !exotel.doc.enabled) {
     error.value = __('Exotel is not enabled')
+    return false
+  }
+  if (defaultCallingMedium.value === 'WebSprix' && !websprix.doc.enabled) {
+    error.value = __('WebSprix is not enabled')
     return false
   }
   return true
