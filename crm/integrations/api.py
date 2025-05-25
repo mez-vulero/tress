@@ -10,11 +10,13 @@ def is_call_integration_enabled():
 	twilio_enabled = frappe.db.get_single_value("CRM Twilio Settings", "enabled")
 	exotel_enabled = frappe.db.get_single_value("CRM Exotel Settings", "enabled")
 	plivo_enabled = frappe.db.get_single_value("CRM Plivo Settings", "enabled")
+	websprix_enabled = frappe.db.get_single_value("CRM WebSprix Settings", "enabled")
 
 	return {
 	"twilio_enabled": twilio_enabled,
 	"exotel_enabled": exotel_enabled,
 	"plivo_enabled": plivo_enabled,
+	"websprix_enabled": websprix_enabled,
 	"default_calling_medium": get_user_default_calling_medium(),
 	}
 

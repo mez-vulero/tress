@@ -1,0 +1,11 @@
+{
+  "doctype": "DocType",
+  "issingle": 1,
+  "module": "FCRM",
+  "field_order": ["enabled", "base_url", "webhook_verify_token"],
+  "fields": [
+    {"fieldname": "enabled", "fieldtype": "Check", "label": "Enabled", "default": "0"},
+    {"fieldname": "base_url", "fieldtype": "Data", "label": "Base URL", "depends_on": "enabled"},
+    {"fieldname": "webhook_verify_token", "fieldtype": "Data", "label": "Webhook Verify Token", "depends_on": "enabled"}
+  ]
+}

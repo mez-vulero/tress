@@ -98,6 +98,7 @@ declare module 'vue' {
     ERPNextSettings: typeof import('./src/components/Settings/ERPNextSettings.vue')['default']
     ErrorPage: typeof import('./src/components/ErrorPage.vue')['default']
     ExotelCallUI: typeof import('./src/components/Telephony/ExotelCallUI.vue')['default']
+    WebSprixCallUI: typeof import('./src/components/Telephony/WebSprixCallUI.vue')['default']
     ExportIcon: typeof import('./src/components/Icons/ExportIcon.vue')['default']
     ExternalLinkIcon: typeof import('./src/components/Icons/ExternalLinkIcon.vue')['default']
     FadedScrollableDiv: typeof import('./src/components/FadedScrollableDiv.vue')['default']

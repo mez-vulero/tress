@@ -1,6 +1,7 @@
 <template>
   <TwilioCallUI ref="twilio" />
   <ExotelCallUI ref="exotel" />
+  <WebSprixCallUI ref="websprix" />
   <Dialog
     v-model="show"
     :options="{
@@ -25,7 +26,7 @@
           type="select"
           v-model="callMedium"
           :label="__('Calling Medium')"
-          :options="['Twilio', 'Exotel']"
+          :options="['Twilio', 'Exotel', 'WebSprix']"
         />
         <div class="flex flex-col gap-1">
           <FormControl
@@ -47,9 +48,11 @@
 <script setup>
 import TwilioCallUI from '@/components/Telephony/TwilioCallUI.vue'
 import ExotelCallUI from '@/components/Telephony/ExotelCallUI.vue'
+import WebSprixCallUI from '@/components/Telephony/WebSprixCallUI.vue'
 import {
   twilioEnabled,
   exotelEnabled,
+  websprixEnabled,
   defaultCallingMedium,
 } from '@/composables/settings'
 import { globalStore } from '@/stores/global'
@@ -60,6 +63,7 @@ const { setMakeCall } = globalStore()
 
 const twilio = ref(null)
 const exotel = ref(null)
+const websprix = ref(null)
 
 const callMedium = ref('Twilio')
 const isDefaultMedium = ref(false)
@@ -78,7 +82,13 @@ function makeCall(number) {
     return
   }
 
-  callMedium.value = twilioEnabled.value ? 'Twilio' : 'Exotel'
+  callMedium.value = twilioEnabled.value
+    ? 'Twilio'
+    : exotelEnabled.value
+      ? 'Exotel'
+      : websprixEnabled.value
+        ? 'WebSprix'
+        : 'Twilio'
   if (defaultCallingMedium.value) {
     callMedium.value = defaultCallingMedium.value
   }
@@ -99,6 +109,9 @@ function makeCallUsing() {
   if (callMedium.value === 'Exotel') {
     exotel.value.makeOutgoingCall(mobileNumber.value)
   }
+  if (callMedium.value === 'WebSprix') {
+    websprix.value.makeOutgoingCall(mobileNumber.value)
+  }
   show.value = false
 }
 
@@ -114,8 +127,8 @@ async function setDefaultCallingMedium() {
 }
 
 watch(
-  [twilioEnabled, exotelEnabled],
-  ([twilioValue, exotelValue]) =>
+  [twilioEnabled, exotelEnabled, websprixEnabled],
+  ([twilioValue, exotelValue, websprixValue]) =>
     nextTick(() => {
       if (twilioValue) {
         twilio.value.setup()
@@ -127,8 +140,14 @@ watch(
         callMedium.value = 'Exotel'
       }
 
-      if (twilioValue || exotelValue) {
-        callMedium.value = 'Twilio'
+      if (websprixValue) {
+        websprix.value.setup()
+        callMedium.value = 'WebSprix'
+      }
+
+      if (twilioValue || exotelValue || websprixValue) {
+        callMedium.value =
+          twilioValue ? 'Twilio' : exotelValue ? 'Exotel' : 'WebSprix'
         setMakeCall(makeCall)
       }
     }),
