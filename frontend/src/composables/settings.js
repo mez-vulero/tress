@@ -23,6 +23,7 @@ createResource({
 export const callEnabled = ref(false)
 export const twilioEnabled = ref(false)
 export const exotelEnabled = ref(false)
+export const websprixEnabled = ref(false)
 export const defaultCallingMedium = ref('')
 createResource({
   url: 'crm.integrations.api.is_call_integration_enabled',
@@ -31,8 +32,9 @@ createResource({
   onSuccess: (data) => {
     twilioEnabled.value = Boolean(data.twilio_enabled)
     exotelEnabled.value = Boolean(data.exotel_enabled)
+    websprixEnabled.value = Boolean(data.websprix_enabled)
     defaultCallingMedium.value = data.default_calling_medium
-    callEnabled.value = twilioEnabled.value || exotelEnabled.value
+    callEnabled.value = twilioEnabled.value || exotelEnabled.value || websprixEnabled.value
   },
 })
 
