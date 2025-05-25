@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "jsx": "preserve",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "lib": ["ESNext", "DOM"],
+    "skipLibCheck": true,
+    "noEmit": true,
+    "types": ["vitest/globals", "unplugin-icons/types/vue"]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "src/index.ts",
+    "frappe/**/*.ts",
+    "frappe/**/*.d.ts",
+    "frappe/**/*.tsx",
+    "frappe/**/*.vue",
+    "frappe/index.js",
+    "vitest.config.ts",
+    "vitest.setup.ts"
+  ],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
