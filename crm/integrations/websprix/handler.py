@@ -14,21 +14,21 @@ def handle_request(**kwargs):
 
     request_log = create_request_log(
         kwargs,
-        request_description="Plivo Call",
-        service_name="Plivo",
+        request_description="WebSprix Call",
+        service_name="WebSprix",
         request_headers=frappe.request.headers,
         is_remote_request=1,
     )
 
     try:
         request_log.status = "Completed"
-        plivo_settings = get_plivo_settings()
-        if not plivo_settings.enabled:
+        websprix_settings = get_websprix_settings()
+        if not websprix_settings.enabled:
             return
 
         call_payload = kwargs
 
-        frappe.publish_realtime("plivo_call", call_payload)
+        frappe.publish_realtime("websprix_call", call_payload)
         status = call_payload.get("CallStatus")
         if status == "free":
             return
@@ -40,7 +40,7 @@ def handle_request(**kwargs):
                 call_id=call_payload.get("CallUUID"),
                 from_number=call_payload.get("From"),
                 to_number=call_payload.get("To"),
-                medium="Plivo",  # placeholder
+                medium="WebSprix",  # placeholder
                 status=get_call_log_status(call_payload),
                 agent=call_payload.get("AgentEmail"),
             )
@@ -58,27 +58,27 @@ def handle_request(**kwargs):
 @frappe.whitelist()
 def make_a_call(to_number, from_number=None, caller_id=None):
     if not is_integration_enabled():
-        frappe.throw(_("Please setup Plivo integration"), title=_("Integration Not Enabled"))
+        frappe.throw(_("Please setup WebSprix integration"), title=_("Integration Not Enabled"))
 
-    endpoint = get_plivo_endpoint("Call/")
+    endpoint = get_websprix_endpoint("Call/")
 
     if not from_number:
         from_number = frappe.get_value("CRM Telephony Agent", {"user": frappe.session.user}, "mobile_no")
 
     if not caller_id:
-        caller_id = frappe.get_value("CRM Telephony Agent", {"user": frappe.session.user}, "plivo_number")
+        caller_id = frappe.get_value("CRM Telephony Agent", {"user": frappe.session.user}, "websprix_number")
 
     if not from_number:
         frappe.throw(
             _("You do not have mobile number set in your Telephony Agent"), title=_("Mobile Number Missing")
         )
 
-    record_call = frappe.db.get_single_value("CRM Plivo Settings", "record_call")
+    record_call = frappe.db.get_single_value("CRM WebSprix Settings", "record_call")
 
     try:
         response = requests.post(
             endpoint,
-            auth=(get_plivo_settings().auth_id, get_plivo_settings().get_password("auth_token")),
+            auth=(get_websprix_settings().auth_id, get_websprix_settings().get_password("auth_token")),
             data={
                 "from": caller_id or from_number,
                 "to": to_number,
@@ -88,7 +88,7 @@ def make_a_call(to_number, from_number=None, caller_id=None):
         response.raise_for_status()
     except requests.exceptions.HTTPError:
         if exc := response.json().get("error"):
-            frappe.throw(bleach.linkify(exc), title=_("Plivo Exception"))
+            frappe.throw(bleach.linkify(exc), title=_("WebSprix Exception"))
     else:
         res = response.json()
         call_payload = res.get("", {})
@@ -96,7 +96,7 @@ def make_a_call(to_number, from_number=None, caller_id=None):
             call_id=call_payload.get("request_uuid"),
             from_number=from_number,
             to_number=to_number,
-            medium="Plivo",
+            medium="WebSprix",
             call_type="Outgoing",
             agent=frappe.session.user,
         )
@@ -106,8 +106,8 @@ def make_a_call(to_number, from_number=None, caller_id=None):
     return call_details
 
 
-def get_plivo_endpoint(action=None, version="v1"):
-    settings = get_plivo_settings()
+def get_websprix_endpoint(action=None, version="v1"):
+    settings = get_websprix_settings()
     base = f"https://api.plivo.com/{version}/Account/{settings.auth_id}/"
     if action:
         base += action
@@ -117,16 +117,16 @@ def get_plivo_endpoint(action=None, version="v1"):
 def get_status_updater_url():
     from frappe.utils.data import get_url
 
-    webhook_verify_token = frappe.db.get_single_value("CRM Plivo Settings", "webhook_verify_token")
-    return get_url(f"api/method/crm.integrations.plivo.handler.handle_request?key={webhook_verify_token}")
+    webhook_verify_token = frappe.db.get_single_value("CRM WebSprix Settings", "webhook_verify_token")
+    return get_url(f"api/method/crm.integrations.websprix.handler.handle_request?key={webhook_verify_token}")
 
 
-def get_plivo_settings():
-    return frappe.get_single("CRM Plivo Settings")
+def get_websprix_settings():
+    return frappe.get_single("CRM WebSprix Settings")
 
 
 def validate_request():
-    webhook_verify_token = frappe.db.get_single_value("CRM Plivo Settings", "webhook_verify_token")
+    webhook_verify_token = frappe.db.get_single_value("CRM WebSprix Settings", "webhook_verify_token")
     key = frappe.request.args.get("key")
     is_valid = key and key == webhook_verify_token
 
@@ -136,7 +136,7 @@ def validate_request():
 
 @frappe.whitelist()
 def is_integration_enabled():
-    return frappe.db.get_single_value("CRM Plivo Settings", "enabled", True)
+    return frappe.db.get_single_value("CRM WebSprix Settings", "enabled", True)
 
 
 # Call Log Functions
@@ -155,7 +155,7 @@ def create_call_log(
     call_log.medium = medium
     call_log.type = call_type
     call_log.status = status
-    call_log.telephony_medium = "Plivo"
+    call_log.telephony_medium = "WebSprix"
     setattr(call_log, "from", from_number)
 
     if call_type == "Incoming":

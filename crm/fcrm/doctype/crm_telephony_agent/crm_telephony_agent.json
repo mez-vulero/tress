@@ -18,8 +18,8 @@
     "column_break_aydj",
     "exotel",
     "exotel_number",
-    "plivo",
-    "plivo_number",
+    "websprix",
+    "websprix_number",
     "section_break_phlq",
     "phone_nos"
   ],
@@ -62,11 +62,11 @@
       "mandatory_depends_on": "exotel"
     },
     {
-      "depends_on": "plivo",
-      "fieldname": "plivo_number",
+      "depends_on": "websprix",
+      "fieldname": "websprix_number",
       "fieldtype": "Data",
-      "label": "Plivo Number",
-      "mandatory_depends_on": "plivo"
+      "label": "WebSprix Number",
+      "mandatory_depends_on": "websprix"
     },
     {
       "fieldname": "section_break_phlq",
@@ -107,15 +107,15 @@
     },
     {
       "default": "0",
-      "fieldname": "plivo",
+      "fieldname": "websprix",
       "fieldtype": "Check",
-      "label": "Plivo"
+      "label": "WebSprix"
     },
     {
       "fieldname": "default_medium",
       "fieldtype": "Select",
       "label": "Default Medium",
-      "options": "\nTwilio\nExotel\nPlivo"
+      "options": "\nTwilio\nExotel\nWebSprix"
     },
     {
       "default": "Computer",
