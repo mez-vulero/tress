@@ -4,6 +4,7 @@ from frappe import _
 
 
 class WebsprixPBX:
+
     """Connector for WebSprix PBX API."""
 
     def __init__(self, settings):
@@ -55,6 +56,7 @@ def get_user_settings():
 
 @frappe.whitelist()
 def fetch_users_to_transfer():
+
     """Return available extensions to transfer a call."""
     websprix = WebsprixPBX.connect()
     if not websprix:

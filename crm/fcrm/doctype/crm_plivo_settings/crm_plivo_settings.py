@@ -4,7 +4,7 @@ from frappe import _
 from frappe.model.document import Document
 
 
-class CRMWebSprixSettings(Document):
+class CRMPlivoSettings(Document):
     def validate(self):
         self.verify_credentials()
 
@@ -16,6 +16,6 @@ class CRMWebSprixSettings(Document):
             )
             if response.status_code != 200:
                 frappe.throw(
-                    _(f"Please enter valid WebSprix Auth ID & Auth Token: {response.reason}"),
+                    _(f"Please enter valid Plivo Auth ID & Auth Token: {response.reason}"),
                     title=_("Invalid credentials"),
                 )
