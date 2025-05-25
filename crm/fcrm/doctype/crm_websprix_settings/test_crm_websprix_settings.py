@@ -1,13 +1,12 @@
 from frappe.tests import IntegrationTestCase, UnitTestCase
 
 
-class UnitTestCRMWebsprixSettings(UnitTestCase):
-    """Unit tests for CRMWebsprixSettings."""
 
+class UnitTestCRMWebSprixSettings(UnitTestCase):
+    """Unit tests for CRMWebSprixSettings."""
     pass
 
 
-class IntegrationTestCRMWebsprixSettings(IntegrationTestCase):
-    """Integration tests for CRMWebsprixSettings."""
-
+class IntegrationTestCRMWebSprixSettings(IntegrationTestCase):
+    """Integration tests for CRMWebSprixSettings."""
     pass
