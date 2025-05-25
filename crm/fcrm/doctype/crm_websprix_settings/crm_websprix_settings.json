@@ -9,9 +9,12 @@
   "column_break_a",
   "record_call",
   "section_break_a",
-  "auth_id",
+  "organization_id",
+  "extension",
   "column_break_b",
-  "auth_token",
+  "api_key",
+  "sip_server_address",
+  "websocket_url",
   "section_break_b",
   "webhook_verify_token"
  ],
@@ -29,9 +32,16 @@
   },
   {
    "depends_on": "enabled",
-   "fieldname": "auth_id",
+   "fieldname": "organization_id",
    "fieldtype": "Data",
-   "label": "Auth ID",
+   "label": "Organization ID",
+   "mandatory_depends_on": "enabled"
+  },
+  {
+   "depends_on": "enabled",
+   "fieldname": "extension",
+   "fieldtype": "Data",
+   "label": "Extension",
    "mandatory_depends_on": "enabled"
   },
   {
@@ -46,10 +56,24 @@
   },
   {
    "depends_on": "enabled",
-   "fieldname": "auth_token",
+   "fieldname": "api_key",
    "fieldtype": "Password",
    "in_list_view": 1,
-   "label": "Auth Token",
+   "label": "API Key",
+   "mandatory_depends_on": "enabled"
+  },
+  {
+   "depends_on": "enabled",
+   "fieldname": "sip_server_address",
+   "fieldtype": "Data",
+   "label": "SIP Server Address",
+   "mandatory_depends_on": "enabled"
+  },
+  {
+   "depends_on": "enabled",
+   "fieldname": "websocket_url",
+   "fieldtype": "Data",
+   "label": "Websocket URL",
    "mandatory_depends_on": "enabled"
   },
   {
@@ -77,7 +101,7 @@
  "modified": "2025-01-22 19:54:20.074393",
  "modified_by": "Administrator",
  "module": "FCRM",
- "name": "CRM Plivo Settings",
+ "name": "CRM WebSprix Settings",
  "owner": "Administrator",
  "permissions": [
   {
