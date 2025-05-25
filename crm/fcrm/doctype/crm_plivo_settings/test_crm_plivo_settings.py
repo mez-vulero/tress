@@ -2,12 +2,12 @@ from frappe.tests import IntegrationTestCase, UnitTestCase
 
 
 class UnitTestCRMPlivoSettings(UnitTestCase):
-    """Unit tests for CRMPlivoSettings."""
+	"""Unit tests for CRMPlivoSettings."""
 
-    pass
+	pass
 
 
 class IntegrationTestCRMPlivoSettings(IntegrationTestCase):
-    """Integration tests for CRMPlivoSettings."""
+	"""Integration tests for CRMPlivoSettings."""
 
-    pass
+	pass
