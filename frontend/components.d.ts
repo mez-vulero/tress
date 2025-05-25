@@ -237,6 +237,7 @@ declare module 'vue' {
     VolumnHighIcon: typeof import('./src/components/Icons/VolumnHighIcon.vue')['default']
     VolumnLowIcon: typeof import('./src/components/Icons/VolumnLowIcon.vue')['default']
     WebsiteIcon: typeof import('./src/components/Icons/WebsiteIcon.vue')['default']
+    WebSprixCallUI: typeof import('./src/components/Telephony/WebSprixCallUI.vue')['default']
     WhatsAppArea: typeof import('./src/components/Activities/WhatsAppArea.vue')['default']
     WhatsAppBox: typeof import('./src/components/Activities/WhatsAppBox.vue')['default']
     WhatsAppIcon: typeof import('./src/components/Icons/WhatsAppIcon.vue')['default']
