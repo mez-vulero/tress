@@ -5,14 +5,14 @@
     >
       <div>{{ __('Telephony Settings') }}</div>
       <Badge
-        v-if="twilio.isDirty || exotel.isDirty || plivo.isDirty || mediumChanged"
+        v-if="twilio.isDirty || exotel.isDirty || websprix.isDirty || mediumChanged"
         :label="__('Not Saved')"
         variant="subtle"
         theme="orange"
       />
     </h2>
     <div
-      v-if="!twilio.get.loading || !exotel.get.loading || !plivo.get.loading"
+      v-if="!twilio.get.loading || !exotel.get.loading || !websprix.get.loading"
       class="flex-1 flex flex-col gap-8 overflow-y-auto"
     >
       <!-- General -->
@@ -24,7 +24,7 @@
           { label: __(''), value: '' },
           { label: __('Twilio'), value: 'Twilio' },
           { label: __('Exotel'), value: 'Exotel' },
-          { label: __('Plivo'), value: 'Plivo' },
+          { label: __('WebSprix'), value: 'WebSprix' },
         ]"
         class="w-1/2"
         :description="__('Default calling medium for logged in user')"
@@ -56,16 +56,16 @@
         />
       </div>
 
-      <!-- Plivo -->
+      <!-- WebSprix -->
       <div v-if="isManager()" class="flex flex-col justify-between gap-4">
         <span class="text-base font-semibold text-ink-gray-9">
-          {{ __('Plivo') }}
+          {{ __('WebSprix') }}
         </span>
         <FieldLayout
-          v-if="plivo?.doc && plivoTabs"
-          :tabs="plivoTabs"
-          :data="plivo.doc"
-          doctype="CRM Plivo Settings"
+          v-if="websprix?.doc && websprixTabs"
+          :tabs="websprixTabs"
+          :data="websprix.doc"
+          doctype="CRM WebSprix Settings"
         />
       </div>
     </div>
@@ -76,11 +76,11 @@
       <div>
         <ErrorMessage
           class="mt-2"
-          :message="twilio.save.error || exotel.save.error || plivo.save.error || error"
+          :message="twilio.save.error || exotel.save.error || websprix.save.error || error"
         />
       </div>
       <Button
-        :loading="twilio.save.loading || exotel.save.loading || plivo.save.loading"
+        :loading="twilio.save.loading || exotel.save.loading || websprix.save.loading"
         :label="__('Update')"
         variant="solid"
         @click="update"
@@ -127,11 +127,11 @@ const exotelFields = createResource({
   auto: true,
 })
 
-const plivoFields = createResource({
+const websprixFields = createResource({
   url: 'crm.api.doc.get_fields',
-  cache: ['fields', 'CRM Plivo Settings'],
+  cache: ['fields', 'CRM WebSprix Settings'],
   params: {
-    doctype: 'CRM Plivo Settings',
+    doctype: 'CRM WebSprix Settings',
     allow_all_fieldtypes: true,
   },
   auto: true,
@@ -167,14 +167,14 @@ const exotel = createDocumentResource({
   },
 })
 
-const plivo = createDocumentResource({
-  doctype: 'CRM Plivo Settings',
-  name: 'CRM Plivo Settings',
+const websprix = createDocumentResource({
+  doctype: 'CRM WebSprix Settings',
+  name: 'CRM WebSprix Settings',
   fields: ['*'],
   auto: true,
   setValue: {
     onSuccess: () => {
-      toast.success(__('Plivo settings updated successfully'))
+      toast.success(__('WebSprix settings updated successfully'))
     },
     onError: (err) => {
       toast.error(err.message + ': ' + err.messages[0])
@@ -286,10 +286,10 @@ const exotelTabs = computed(() => {
   return _tabs
 })
 
-const plivoTabs = computed(() => {
-  if (!plivoFields.data) return []
+const websprixTabs = computed(() => {
+  if (!websprixFields.data) return []
   let _tabs = []
-  let fieldsData = plivoFields.data
+  let fieldsData = websprixFields.data
 
   if (fieldsData[0].type != 'Tab Break') {
     let _sections = []
@@ -358,8 +358,8 @@ function update() {
   if (exotel.isDirty) {
     exotel.save.submit()
   }
-  if (plivo.isDirty) {
-    plivo.save.submit()
+  if (websprix.isDirty) {
+    websprix.save.submit()
   }
 }
 
@@ -385,8 +385,8 @@ function validateIfDefaultMediumIsEnabled() {
     error.value = __('Exotel is not enabled')
     return false
   }
-  if (defaultCallingMedium.value === 'Plivo' && !plivo.doc.enabled) {
-    error.value = __('Plivo is not enabled')
+  if (defaultCallingMedium.value === 'WebSprix' && !websprix.doc.enabled) {
+    error.value = __('WebSprix is not enabled')
     return false
   }
   return true
