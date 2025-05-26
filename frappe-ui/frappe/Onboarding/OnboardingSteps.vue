@@ -88,7 +88,7 @@ const props = defineProps({
   },
   title: {
     type: String,
-    default: 'Frappe CRM',
+    default: 'Tress',
   },
   logo: {
     type: Object,

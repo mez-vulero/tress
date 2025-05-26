@@ -34,7 +34,7 @@ const props = defineProps({
   },
   appName: {
     type: String,
-    default: 'Frappe CRM',
+    default: 'Tress',
   },
   redirectURL: {
     type: String,
