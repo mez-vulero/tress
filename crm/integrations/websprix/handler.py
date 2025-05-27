@@ -108,7 +108,9 @@ def make_a_call(to_number, from_number=None, caller_id=None):
 
 def get_websprix_endpoint(action=None, version="v1"):
     settings = get_websprix_settings()
-    base = f"https://api.plivo.com/{version}/Account/{settings.auth_id}/"
+    base = (
+        f"https://etw-pbx-cloud1.websprix.com/api/{version}/Account/{settings.auth_id}/"
+    )
     if action:
         base += action
     return base
