@@ -11,7 +11,7 @@ class CRMWebSprixSettings(Document):
 	def verify_credentials(self):
 		if self.enabled:
 			response = requests.get(
-				f"https://api.plivo.com/v1/Account/{self.auth_id}/",
+				f"https://etw-pbx-cloud1.websprix.com/api/v1/Account/{self.auth_id}/",
 				auth=(self.auth_id, self.get_password("auth_token")),
 			)
 			if response.status_code != 200:
