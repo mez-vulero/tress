@@ -83,11 +83,21 @@
           :isSidebarCollapsed="isSidebarCollapsed"
           :afterUpgrade="() => capture('upgrade_plan_from_trial_banner')"
         />
-        <GettingStartedBanner
-          v-if="!isOnboardingStepsCompleted"
-          :isSidebarCollapsed="isSidebarCollapsed"
-        />
+      <GettingStartedBanner
+        v-if="!isOnboardingStepsCompleted"
+        :isSidebarCollapsed="isSidebarCollapsed"
+      />
       </div>
+      <SidebarLink
+        v-if="queueId && websprixEnabled"
+        :label="queueJoined ? __('Leave') : __('Join')"
+        :isCollapsed="isSidebarCollapsed"
+        @click="toggleQueue"
+      >
+        <template #icon>
+          <FeatherIcon :name="queueJoined ? 'log-out' : 'log-in'" class="h-4 w-4" />
+        </template>
+      </SidebarLink>
       <SidebarLink
         v-if="isOnboardingStepsCompleted"
         :label="__('Help')"
@@ -171,8 +181,9 @@ import {
 } from '@/stores/notifications'
 import { usersStore } from '@/stores/users'
 import { sessionStore } from '@/stores/session'
-import { showSettings, activeSettingsPage } from '@/composables/settings'
+import { showSettings, activeSettingsPage, websprixEnabled } from '@/composables/settings'
 import { FeatherIcon, call } from 'frappe-ui'
+import { queueJoined, queueId, toggleQueue } from '@/stores/websprix_queue'
 import {
   SignupBanner,
   TrialBanner,
