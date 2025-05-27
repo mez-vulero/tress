@@ -5,7 +5,6 @@ import subprocess
 
 import frappe
 from frappe import safe_decode
-from frappe.integrations.frappe_providers.frappecloud_billing import is_fc_site
 from frappe.utils import cint, get_system_timezone
 from frappe.utils.telemetry import capture
 
@@ -39,7 +38,6 @@ def get_boot():
 			"setup_complete": cint(frappe.get_system_settings("setup_complete")),
 			"sysdefaults": frappe.defaults.get_defaults(),
 			"is_demo_site": frappe.conf.get("is_demo_site"),
-			"is_fc_site": is_fc_site(),
 			"timezone": {
 				"system": get_system_timezone(),
 				"user": frappe.db.get_value("User", frappe.session.user, "time_zone")
