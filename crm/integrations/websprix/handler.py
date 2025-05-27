@@ -75,10 +75,11 @@ def make_a_call(to_number, from_number=None, caller_id=None):
 
     record_call = frappe.db.get_single_value("CRM WebSprix Settings", "record_call")
 
+    headers = {"x-api-key": get_websprix_settings().api_key}
     try:
         response = requests.post(
             endpoint,
-            auth=(get_websprix_settings().auth_id, get_websprix_settings().get_password("auth_token")),
+            headers=headers,
             data={
                 "from": caller_id or from_number,
                 "to": to_number,
@@ -109,7 +110,7 @@ def make_a_call(to_number, from_number=None, caller_id=None):
 def get_websprix_endpoint(action=None, version="v1"):
     settings = get_websprix_settings()
     base = (
-        f"https://etw-pbx-cloud1.websprix.com/api/{version}/Account/{settings.auth_id}/"
+        f"https://etw-pbx-cloud1.websprix.com/api/{version}/Account/{settings.customer_id}/"
     )
     if action:
         base += action
@@ -118,9 +119,7 @@ def get_websprix_endpoint(action=None, version="v1"):
 
 def get_status_updater_url():
     from frappe.utils.data import get_url
-
-    webhook_verify_token = frappe.db.get_single_value("CRM WebSprix Settings", "webhook_verify_token")
-    return get_url(f"api/method/crm.integrations.websprix.handler.handle_request?key={webhook_verify_token}")
+    return get_url("api/method/crm.integrations.websprix.handler.handle_request")
 
 
 def get_websprix_settings():
@@ -128,12 +127,7 @@ def get_websprix_settings():
 
 
 def validate_request():
-    webhook_verify_token = frappe.db.get_single_value("CRM WebSprix Settings", "webhook_verify_token")
-    key = frappe.request.args.get("key")
-    is_valid = key and key == webhook_verify_token
-
-    if not is_valid:
-        frappe.throw(_("Unauthorized request"), exc=frappe.PermissionError)
+    pass
 
 
 @frappe.whitelist()
