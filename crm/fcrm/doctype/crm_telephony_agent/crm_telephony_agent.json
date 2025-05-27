@@ -20,6 +20,7 @@
     "exotel_number",
     "websprix",
     "websprix_number",
+    "websprix_queue_id",
     "section_break_phlq",
     "phone_nos"
   ],
@@ -66,6 +67,13 @@
       "fieldname": "websprix_number",
       "fieldtype": "Data",
       "label": "WebSprix Number",
+      "mandatory_depends_on": "websprix"
+    },
+    {
+      "depends_on": "websprix",
+      "fieldname": "websprix_queue_id",
+      "fieldtype": "Data",
+      "label": "Queue ID",
       "mandatory_depends_on": "websprix"
     },
     {
